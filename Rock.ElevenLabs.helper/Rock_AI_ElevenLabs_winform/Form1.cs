@@ -22,6 +22,7 @@ namespace Rock_AI_ElevenLabs_winform
         private string fileLocation;
         private string fileName;
         private string fileDirectory;
+        private bool processing;
 
         //click to load in a CSV file
         private void button1_Click( object sender, EventArgs e )
@@ -57,7 +58,8 @@ namespace Rock_AI_ElevenLabs_winform
             //collect user data from form
             string apiKey = textBox1.Text;
             string columnHeader = textBox2.Text;
-
+            processing = true;
+            
             //check if a CSV file has been selected
             if ( String.IsNullOrWhiteSpace( fileLocation ) )
             {
@@ -108,6 +110,13 @@ namespace Rock_AI_ElevenLabs_winform
             int recordCount = 1;
             foreach (string textValue in distinctItems)
             {
+                //check if the stop processing button has been pressed
+                if ( processing == false )
+                {
+                    label3.Text = "Quit Processing.";
+                    return;
+                }
+
                 label3.Text = "Reading Record " + recordCount + " out of " + totalRecords + " records.";
                 bool readable = true;
 
@@ -160,8 +169,11 @@ namespace Rock_AI_ElevenLabs_winform
                         }
 
                         // Open a file stream and save the response content to a file
-                        string oututFilepath = fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output\\" + textValue + ".mp3";
-                        File.WriteAllBytes( oututFilepath, response.RawBytes );
+                        string outputFilepath = fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output\\" + textValue + ".mp3";
+                        if ( !File.Exists( outputFilepath ) )
+                        {
+                            File.WriteAllBytes( outputFilepath, response.RawBytes );
+                        }
                         recordCount++;
                     }
                     else
@@ -176,9 +188,14 @@ namespace Rock_AI_ElevenLabs_winform
                 }
                 
             }
-
             //display where the output has been stored
             label3.Text = "New Directory Created With Output Files -->  " + fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output";
+        }
+
+        //button to quit
+        private void button3_Click( object sender, EventArgs e )
+        {
+            processing = false;
         }
     }
 }
