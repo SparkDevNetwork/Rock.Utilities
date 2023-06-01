@@ -360,7 +360,7 @@ namespace Rock_AI_Helper_Windows_Form
             public string Input { get; set; }
             public string Result { get; set; }
         }
-
+        
         //stop processing the file
         private void button3_Click( object sender, EventArgs e )
         {
