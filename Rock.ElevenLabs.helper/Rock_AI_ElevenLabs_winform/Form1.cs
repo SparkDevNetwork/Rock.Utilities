@@ -151,35 +151,40 @@ namespace Rock_AI_ElevenLabs_winform
                     } );
 
                     //create a response for the REST call
-                    var response = new RestSharp.RestResponse();
-                    try
+                    string outputFilepath = fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output\\" + textValue + ".mp3";
+                    if ( !File.Exists( outputFilepath ) )
                     {
-                        response = await client.PostAsync( request );
-                    }
-                    catch (System.Net.Http.HttpRequestException)
-                    {
-                        label4.Text += "Could not create audio for record " +recordCount+ ".\n";
-                    }
-                    if ( response.StatusCode == System.Net.HttpStatusCode.OK )
-                    {
-                        // If a File.csv__output directory does not exist, create it
-                        if ( !Directory.Exists( fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output" ) )
+                        var response = new RestSharp.RestResponse();
+                        try
                         {
-                            Directory.CreateDirectory( fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output" );
+                            response = await client.PostAsync( request );
                         }
+                        catch ( System.Net.Http.HttpRequestException )
+                        {
+                            label4.Text += "Could not create audio for record " + recordCount + ".\n";
+                        }
+                        if ( response.StatusCode == System.Net.HttpStatusCode.OK )
+                        {
+                            // If a File.csv__output directory does not exist, create it
+                            if ( !Directory.Exists( fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output" ) )
+                            {
+                                Directory.CreateDirectory( fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output" );
+                            }
 
-                        // Open a file stream and save the response content to a file
-                        string outputFilepath = fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output\\" + textValue + ".mp3";
-                        if ( !File.Exists( outputFilepath ) )
-                        {
+                            // Open a file stream and save the response content to a file
                             File.WriteAllBytes( outputFilepath, response.RawBytes );
+                            recordCount++;
                         }
-                        recordCount++;
+                        else
+                        {
+                            label3.Text = response.ErrorMessage;
+                        }
                     }
                     else
                     {
-                        label3.Text = response.ErrorMessage;
+                        recordCount++;
                     }
+                    
                 }
                 //if there is no data increase the record count and do nothing
                 else
