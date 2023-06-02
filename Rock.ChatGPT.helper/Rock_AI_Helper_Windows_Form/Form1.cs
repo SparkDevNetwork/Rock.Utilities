@@ -13,6 +13,15 @@ using CsvHelper;
 using RestSharp;
 using RestSharp.Authenticators;
 
+/// <summary>
+/// This code runs a webform that takes in a CSV file and runs all rows of the specified column field through chatGPT. If values need more time or error, you can always delete those results.
+/// When re-running the same file, run the output file from the previous run. This program looks to see if a file already has a "Results" column and will only call Chat GPT for inputs without results, skipping the rest.
+/// </summary>
+
+
+
+
+
 namespace Rock_AI_Helper_Windows_Form
 {
     public partial class Form1 : Form
