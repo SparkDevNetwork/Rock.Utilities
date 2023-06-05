@@ -161,7 +161,7 @@ namespace Rock_AI_ElevenLabs_winform
                         }
                         catch ( System.Net.Http.HttpRequestException )
                         {
-                            label4.Text += "Could not create audio for record " + recordCount + ".\n";
+                            label6.Text += "Could not create audio for record " + recordCount + ".\n";
                         }
                         if ( response.StatusCode == System.Net.HttpStatusCode.OK )
                         {
