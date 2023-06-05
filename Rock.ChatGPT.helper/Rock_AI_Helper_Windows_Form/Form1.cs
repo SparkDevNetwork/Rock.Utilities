@@ -305,6 +305,7 @@ namespace Rock_AI_Helper_Windows_Form
                                 catch ( System.Net.Http.HttpRequestException ) //catch if another REST call fails
                                 {
                                     chatGPTAnswer = "[ERROR]";
+                                    label6.Text += "Error on " + recordCount + "\n";
                                 }
                             }
 
