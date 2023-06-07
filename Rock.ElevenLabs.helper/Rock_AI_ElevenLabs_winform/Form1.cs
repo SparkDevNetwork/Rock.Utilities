@@ -151,7 +151,7 @@ namespace Rock_AI_ElevenLabs_winform
                     } );
 
                     //create a response for the REST call
-                    string outputFilepath = fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output\\" + textValue + ".mp3";
+                    string outputFilepath = fileDirectory + "\\" + fileName + "CSV_" + columnHeader + "__output\\" + textValue.ToLower() + ".mp3";
                     if ( !File.Exists( outputFilepath ) )
                     {
                         var response = new RestSharp.RestResponse();

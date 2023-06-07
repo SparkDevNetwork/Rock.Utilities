@@ -295,7 +295,6 @@ namespace Rock_AI_Helper_Windows_Form
                             catch ( System.Net.Http.HttpRequestException httpEx )
                             {
                                 //if response does not call, sleep and call again
-                                label6.Text += "Needed More Time on " + recordCount + "\n";
                                 Thread.Sleep( 2000 );
                                 //do a second repsonse call after the thread sleeps
                                 try
