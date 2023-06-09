@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CsvHelper;
+using Newtonsoft.Json.Linq;
 using RestSharp;
 using RestSharp.Authenticators;
 
@@ -33,7 +34,7 @@ namespace Rock_AI_Helper_Windows_Form
         
         private void Form1_Load( object sender, EventArgs e )
         {
-
+            
         }
 
         //initialize variables
@@ -92,7 +93,14 @@ namespace Rock_AI_Helper_Windows_Form
                 label6.Text = "Please Select a CSV file";
                 return;
             }
-            
+
+            //check if a CHATGPT Model has been selected
+            if ( comboBox1.SelectedItem == null )
+            {
+                label6.Text = "Please Select a Chat Model";
+                return;
+            }
+            label6.Text = "";
             //declare the client
             var options = new RestClientOptions( "https://api.openai.com/v1" )
             {
@@ -102,7 +110,7 @@ namespace Rock_AI_Helper_Windows_Form
             
 
             //declare the gpt chat model and chat content
-            string chatModel = "gpt-4";
+            string chatModel = (string)comboBox1.SelectedItem;
             string chatContent = textBox1.Text;
 
             //parse the textbox chat and make the HTTP Post request
@@ -374,6 +382,47 @@ namespace Rock_AI_Helper_Windows_Form
         private void button3_Click( object sender, EventArgs e )
         {
             processing = false;
+        }
+
+        private async void comboBox1_Click( object sender, EventArgs e )
+        {
+            //collect data from the user
+            string apiKey = textBox2.Text;
+
+            //check if api key has been plugged in
+            if ( apiKey.Equals( "" ) )
+            {
+                label6.Text = "Please Enter an API Key before choosing a model.";
+                return;
+            }
+            label6.Text = "";
+
+            //declare the client
+            var options = new RestClientOptions( "https://api.openai.com/v1" )
+            {
+                Authenticator = new JwtAuthenticator( apiKey )
+            };
+            var client = new RestClient( options );
+
+            //create new REST api call
+            var request = new RestRequest( "models", Method.Get );
+            request.Timeout = 180000;
+
+            //create a response for the REST call
+            var response = await client.GetAsync( request );
+
+            //deserialize the json return value and get the required content
+            string responseString = response.Content;
+
+            // Using Newtonsoft.Json loop through the returned data and get all the model Id's
+            JObject jsonObject = JObject.Parse( responseString );
+            JArray data = ( JArray ) jsonObject["data"];
+
+            foreach ( JObject model in data )
+            {
+                string id = ( string ) model["id"];
+                comboBox1.Items.Add( id );
+            }
         }
     }
 }
